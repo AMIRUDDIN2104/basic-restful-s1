@@ -57,6 +57,16 @@ function login(username, password) {
   console.log(matched)
 }
 
+app.post('/login', (req, res) => (
+  let data = req.body)
+  //res.send(' Post request '+ JSON.stringify(data));
+   //res.send(' Post request '+ data.name +data.password)
+   const user = login(data.username, data.password);
+
+   res.send(generateToken(user))
+};
+
+
 //create a POST route for user to login
 app.post('/login',(req,res)=>{
 
@@ -88,19 +98,41 @@ function register (newusername, newpassword, newemail) {
   }
 }
 
+//To generate JWT Token
+function generateToken(userProfile)
+  return JsonWebTokenError.sign(
+    userProfile,
+    'secret',
+    { expiresIn: 60 * 60 });
+  )
+  
+
+// To verify JWT Token
+function verifyToken(req, res, next) {
+  let header = req.headers.authorization
+  console.log(header)
+
+  let token = header.split(' ')[1]
+
+  JsonWebTokenError.verify(token,'secret', function(err, decoded) {
+    console.log(decoded) // bar
+
+    next()
+  });
+}
+
 
 
 app.post('/register',(req,res) =>
   let data = req.body
   res.send(
-      regster(
+      register(
         data.username,
         data.password,
         data.name,
         data.email
       )
-  );
-});
+  ));
 
 
 app.listen(port, () => {
